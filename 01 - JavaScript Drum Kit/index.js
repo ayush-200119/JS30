@@ -23,3 +23,39 @@
 //     }
 // });
 
+//ideal and fast solution
+
+function playAndAnimate(code){
+    let currSound = document.querySelector(`audio[data-key="${code}"]`);
+    let currElement=document.querySelector(`.key[data-key="${code}"]`);
+    // console.log(currElement);
+    // console.log(currSound); 
+    if(currSound)
+    {
+        currSound.currentTime=0;
+        currSound.play();
+        currElement.classList.add('playing');
+    }
+}
+
+document.addEventListener("keyup",function(e){
+    let code=e.keyCode;
+    playAndAnimate(code);
+});
+
+
+
+let keys=document.getElementsByClassName('key');
+for(let i=0;i<keys.length;i++)
+{
+    keys[i].addEventListener('transitionend',function(e){
+        if(e.propertyName==="transform"){
+            keys[i].classList.remove('playing');
+        }
+    });
+
+    keys[i].addEventListener('click',function(e){
+        let code=keys[i].getAttribute("data-key");
+        playAndAnimate(Number(code));
+    });
+}
