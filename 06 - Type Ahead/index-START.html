@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Type Ahead 👀</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <form class="search-form">
+    <input type="text" class="search" placeholder="City or State">
+    <ul class="suggestions">
+      <li>Filter for a city</li>
+      <li>or a state</li>
+    </ul>
+  </form>
+<script>
+const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+
+let cityData=[];
+let citiesAndState=[];
+fetch(endpoint).then((res)=>res.json()).then((data)=>{
+cityData.push(...data);});
+
+console.log(cityData);
+
+const searchBar=document.querySelector('.search');
+const listItems=document.querySelector('.suggestions');
+// console.log(listItems);
+
+//event listener to get the city typed by the user
+searchBar.addEventListener("input",function(e){
+  const searchKey=e.target.value;
+  const pattern=new RegExp(searchKey,'gi');
+  let resCities=cityData.filter((curr)=>{
+    return (pattern.test(curr.city) || pattern.test(curr.state));
+  });
+  
+  function highlightText(value)
+  {
+      let ans="";
+      let index=value.search(pattern);
+      if(index!=-1)
+      {
+          ans+=value.substring(0,index)+`<mark>${value.substring(index,index+searchKey.length)}</mark>`+value.substring(index+searchKey.length);
+      }
+      else
+      {
+          ans+=value;
+      }
+  
+      return ans;
+  }
+
+  let start="";
+  let content=resCities.reduce((acc,curr)=>{
+     return acc+`<li>${highlightText(curr.city)},   ${highlightText(curr.state)}</li>`;
+  },start);
+  listItems.innerHTML=content;
+});
+
+</script>
+</body>
+</html>
